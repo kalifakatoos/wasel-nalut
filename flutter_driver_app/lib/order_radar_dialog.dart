@@ -47,7 +47,7 @@ class _OrderRadarDialogState extends State<OrderRadarDialog> with SingleTickerPr
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            LinearProgressIndicator(value: 1.0, valueColor: _controller.drive(ColorTween(begin: Colors.red, color: Colors.orange))),
+            LinearProgressIndicator(value: 1.0, valueColor: _controller.drive(ColorTween(begin: Colors.red, end: Colors.orange))),
             const SizedBox(height: 16),
             const Text('مطعم قصر نالوت • شارع القلعة', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
             const SizedBox(height: 8),
