@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(kapso --version)",
+      "Bash(npx kapso *)",
+      "Bash(npm ls *)",
+      "Read(//c/Users/kalifa/.npm-global/lib/**)",
+      "Bash(npx --no-install kapso --version)",
+      "Bash(npm root *)",
+      "Read(//c/Users/kalifa/AppData/Roaming/**)",
+      "Bash(ls \"C:/Users/kalifa/AppData/Roaming/npm/node_modules\" 2>/dev/null | grep -i kapso; ls \"C:/Users/kalifa/AppData/Local/hermes/node/node_modules\" 2>/dev/null | grep -i kapso; echo \"---\"; find \"C:/Users/kalifa\" -name \"*.kapso*\" -o -name \"@kapso*\" -type d 2>/dev/null | head -20)"
+    ]
+  }
+}
