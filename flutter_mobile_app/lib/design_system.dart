@@ -19,6 +19,12 @@ class AppColors {
   static const Color darkTextSecondary  = Color(0xFF94A3B8);
   static const Color darkTextMuted      = Color(0xFF64748B);
 
+  // Backward Compatibility Aliases for Light Mode / Existing Screens
+  static const Color lightBackground    = Color(0xFF070A12);
+  static const Color lightSurface       = Color(0xFF0F172A);
+  static const Color lightCard          = Color(0xFF1E293B);
+  static const Color lightTextPrimary   = Color(0xFFF8FAFC);
+
   // Glassmorphism & Effects
   static Color glassBackground = const Color(0xFF1E293B).withOpacity(0.75);
   static Color glassBorder     = const Color(0xFF475569).withOpacity(0.3);
@@ -31,6 +37,20 @@ class AppColors {
 }
 
 class AppTheme {
+  static ThemeData lightTheme = ThemeData(
+    useMaterial3: true,
+    brightness: Brightness.dark,
+    primaryColor: AppColors.waselPrimary,
+    scaffoldBackgroundColor: AppColors.darkBackground,
+    colorScheme: ColorScheme.dark(
+      primary: AppColors.waselPrimary,
+      secondary: AppColors.waselSecondary,
+      surface: AppColors.darkSurface,
+      error: AppColors.error,
+    ),
+    fontFamily: 'Tajawal',
+  );
+
   static ThemeData darkTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
