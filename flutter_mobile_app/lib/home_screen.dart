@@ -1,4 +1,4 @@
-// home_screen.dart — Wasel Nalut Super-App Home Dashboard
+// home_screen.dart — Wasel Nalut Super-App Home Dashboard (World-Class Redesign)
 import 'package:flutter/material.dart';
 import 'design_system.dart';
 import 'product_detail_sheet.dart';
@@ -64,16 +64,21 @@ class _HomeScreenState extends State<HomeScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
+        backgroundColor: AppColors.darkBackground,
         appBar: AppBar(
+          backgroundColor: AppColors.darkSurface,
+          elevation: 0,
           title: Row(
             children: [
               const Icon(Icons.location_on, color: AppColors.waselPrimary),
               const SizedBox(width: 8),
               DropdownButton<String>(
                 value: selectedDistrict,
+                dropdownColor: AppColors.darkCard,
+                style: const TextStyle(color: AppColors.darkTextPrimary, fontWeight: FontWeight.bold),
                 underline: const SizedBox(),
                 items: districts.map((d) {
-                  return DropdownMenuItem(value: d, child: Text(d, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)));
+                  return DropdownMenuItem(value: d, child: Text(d, style: const TextStyle(fontSize: 14)));
                 }).toList(),
                 onChanged: (val) {
                   if (val != null) setState(() => selectedDistrict = val);
@@ -83,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.receipt_long),
+              icon: const Icon(Icons.receipt_long, color: AppColors.waselPrimary),
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const OrderTrackingScreen()));
               },
@@ -96,84 +101,115 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Banner
+                // Immersive Gradient Banner
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(colors: [AppColors.waselPrimary, AppColors.waselSecondary]),
-                    borderRadius: BorderRadius.circular(16),
+                    gradient: const LinearGradient(
+                      colors: [AppColors.waselPrimary, AppColors.waselSecondary],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(color: AppColors.waselPrimary.withOpacity(0.3), blurRadius: 16, offset: const Offset(0, 8))
+                    ],
                   ),
-                  child: const Column(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('تطبيق واصل نالوت 🚀', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 8),
-                      Text('كل ما تحتاجه في نالوت وصل بباب بيتك — طعام، مقاضي، وإلكترونيات.', style: TextStyle(color: Colors.white70, fontSize: 13)),
+                      Row(
+                        children: const [
+                          Text('تطبيق واصل نالوت 🚀', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900)),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      const Text('كل ما تحتاجه في نالوت وصل بباب بيتك — طعام، مقاضي، وإلكترونيات.', style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.4)),
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
 
                 // Vertical Selector Tabs
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    _buildVerticalTab('food', 'طعام 🍔', AppColors.waselPrimary),
-                    _buildVerticalTab('grocery', 'مقاضي 🛒', AppColors.waselGreen),
-                    _buildVerticalTab('marketplace', 'متاع ⚡', AppColors.waselPurple),
+                    _buildVerticalTab('طعام', 'food', Icons.restaurant),
+                    _buildVerticalTab('مقاضي', 'grocery', Icons.shopping_cart),
+                    _buildVerticalTab('سوق', 'marketplace', Icons.storefront),
                   ],
                 ),
                 const SizedBox(height: 24),
 
-                const Text('المتاجر المتاحة في منطقتك', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 12),
+                const Text('المتاجر المتاحة في منطقتك', style: TextStyle(color: AppColors.darkTextPrimary, fontSize: 18, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 16),
 
                 filteredStores.isEmpty
-                    ? const Center(child: Padding(padding: EdgeInsets.all(40), child: Text('لا توجد متاجر نشطة في هذا الحي حالياً')))
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(40.0),
+                          child: Text('لا توجد متاجر نشطة حالياً في هذا القسم ضمن هذا الحي.', style: TextStyle(color: AppColors.darkTextMuted)),
+                        ),
+                      )
                     : ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: filteredStores.length,
                         itemBuilder: (context, index) {
                           final store = filteredStores[index];
-                          return Card(
-                            margin: const EdgeInsets.only(bottom: 16),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            child: InkWell(
-                              onTap: () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  builder: (_) => ProductDetailSheet(storeName: store['name']),
-                                );
-                              },
-                              borderRadius: BorderRadius.circular(12),
+                          return GestureDetector(
+                            onTap: () {
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                backgroundColor: Colors.transparent,
+                                builder: (_) => ProductDetailSheet(storeName: store['name']),
+                              );
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(bottom: 16),
+                              decoration: BoxDecoration(
+                                color: AppColors.darkCard,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: AppColors.darkBorder),
+                                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))],
+                              ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   ClipRRect(
-                                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                                    child: Image.network(store['image'], height: 150, width: double.infinity, fit: BoxFit.cover),
+                                    borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                                    child: Image.network(store['image'], height: 160, width: double.infinity, fit: BoxFit.cover),
                                   ),
                                   Padding(
-                                    padding: const EdgeInsets.all(12.0),
+                                    padding: const EdgeInsets.all(16.0),
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(store['name'], style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                                        const SizedBox(height: 6),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Expanded(child: Text(store['name'], style: const TextStyle(color: AppColors.darkTextPrimary, fontSize: 16, fontWeight: FontWeight.bold))),
+                                            Row(
+                                              children: [
+                                                const Icon(Icons.star, color: AppColors.gold, size: 16),
+                                                const SizedBox(width: 4),
+                                                Text('${store['rating']}', style: const TextStyle(color: AppColors.darkTextPrimary, fontWeight: FontWeight.bold)),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
                                         Row(
                                           children: [
-                                            const Icon(Icons.star, size: 16, color: AppColors.gold),
+                                            const Icon(Icons.access_time, size: 14, color: AppColors.darkTextSecondary),
                                             const SizedBox(width: 4),
-                                            Text('${store['rating']}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                            Text(store['time'], style: const TextStyle(color: AppColors.darkTextSecondary, fontSize: 12)),
                                             const SizedBox(width: 16),
-                                            const Icon(Icons.access_time, size: 16, color: Colors.grey),
+                                            const Icon(Icons.delivery_dining, size: 14, color: AppColors.waselSecondary),
                                             const SizedBox(width: 4),
-                                            Text(store['time']),
-                                            const Spacer(),
-                                            Text('التوصيل ${store['fee']}', style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.waselPrimary)),
+                                            Text(store['fee'], style: const TextStyle(color: AppColors.waselSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
                                           ],
                                         ),
                                       ],
@@ -193,22 +229,25 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildVerticalTab(String id, String label, Color color) {
-    bool isSelected = selectedVertical == id;
-    return InkWell(
-      onTap: () => setState(() => selectedVertical = id),
+  Widget _buildVerticalTab(String title, String verticalKey, IconData icon) {
+    final isSelected = selectedVertical == verticalKey;
+    return GestureDetector(
+      onTap: () => setState(() => selectedVertical = verticalKey),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? color : Colors.white,
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: isSelected ? color : Colors.grey.shade300),
-          boxShadow: isSelected ? [BoxShadow(color: color.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))] : [],
+          color: isSelected ? AppColors.waselPrimary : AppColors.darkCard,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: isSelected ? AppColors.waselPrimary : AppColors.darkBorder),
+          boxShadow: isSelected ? [BoxShadow(color: AppColors.waselPrimary.withOpacity(0.4), blurRadius: 10, offset: const Offset(0, 4))] : [],
         ),
-        child: Text(
-          label,
-          style: TextStyle(color: isSelected ? Colors.white : Colors.black87, fontWeight: FontWeight.bold),
+        child: Row(
+          children: [
+            Icon(icon, color: isSelected ? Colors.white : AppColors.darkTextSecondary, size: 18),
+            const SizedBox(width: 8),
+            Text(title, style: TextStyle(color: isSelected ? Colors.white : AppColors.darkTextSecondary, fontWeight: FontWeight.bold, fontSize: 14)),
+          ],
         ),
       ),
     );
