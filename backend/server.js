@@ -40,6 +40,21 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(morgan('combined'));
+app.use(express.static('public'));
+
+// Static web routes
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.get('/merchant', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/merchant.html'));
+});
+
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/admin.html'));
+});
 
 // Initialize Socket.io
 const io = new Server(server, {
