@@ -18,59 +18,123 @@
         .items-list { font-size: 14px; color: #94a3b8; margin-bottom: 15px; }
         .btn { background: #10b981; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-family: 'Tajawal'; font-weight: bold; width: 100%; }
         .btn:hover { opacity: 0.9; }
+        .auth-container { max-width: 400px; margin: 80px auto; background: #131b2e; border: 1px solid #334155; border-radius: 16px; padding: 30px; text-align: center; }
+        .auth-container input { width: 100%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid #334155; background: #1e293b; color: white; font-family: 'Tajawal'; font-size: 16px; box-sizing: border-box; }
+        .auth-container button { background: #25d366; color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; font-family: 'Tajawal'; }
     </style>
 </head>
 <body>
-    <header>
-        <h1>🏪 نظام شاشات المطبخ KDS — مطعم قصر نالوت</h1>
-        <div>📍 الحالة: متصل بالخادم المباشر</div>
-    </header>
-
-    <div class="kds-grid">
-        <div class="column">
-            <h2>🔔 طلبات جديدة (جديد)</h2>
-            <div class="order-card">
-                <div class="order-header">
-                    <span>#WAS-NAL-8492</span>
-                    <span class="badge">دفع كاش (COD)</span>
-                </div>
-                <div class="items-list">
-                    • 2x شاورما دجاج تنور نالوتي<br>
-                    • 1x بطاطا مقلية مقرمشة<br>
-                    <strong>ملاحظات:</strong> بدون بصل، ثومية إضافية
-                </div>
-                <button class="btn" onclick="alert('تم نقل الطلب إلى قيد التحضير!')">بدء التحضير (20 دقيقة)</button>
-            </div>
+    <div id="authScreen" class="auth-container">
+        <h2>🔐 دخول مدير المطعم عبر واتساب (Kapso OTP)</h2>
+        <p style="color: #94a3b8; font-size: 14px;">أدخل رقم الهاتف لتلقي رمز التحقق الفوري عبر واتساب</p>
+        <input type="text" id="phoneInput" placeholder="0912345678" />
+        <button onclick="sendOtp()">إرسال رمز التحقق عبر واتساب</button>
+        <div id="otpSection" style="display:none; margin-top:20px;">
+            <input type="text" id="otpInput" placeholder="أدخل رمز الـ 4 أرقام" maxlength="4" />
+            <button onclick="verifyOtp()" style="background: #10b981;">تحقق ودخول KDS</button>
         </div>
+    </div>
 
-        <div class="column">
-            <h2>🔥 قيد التحضير (Preparing)</h2>
-            <div class="order-card" style="border-right-color: #f59e0b;">
-                <div class="order-header">
-                    <span>#WAS-NAL-8490</span>
-                    <span class="badge" style="background: #f59e0b;">جاري الطبخ</span>
+    <div id="kdsScreen" style="display:none;">
+        <header>
+            <h1>🏪 نظام شاشات المطبخ KDS — مطعم قصر نالوت</h1>
+            <div>📍 الحالة: موثق عبر واتساب (Kapso AI)</div>
+        </header>
+
+        <div class="kds-grid">
+            <div class="column">
+                <h2>🔔 طلبات جديدة (جديد)</h2>
+                <div class="order-card">
+                    <div class="order-header">
+                        <span>#WAS-NAL-8492</span>
+                        <span class="badge">دفع كاش (COD)</span>
+                    </div>
+                    <div class="items-list">
+                        • 2x شاورما دجاج تنور نالوتي<br>
+                        • 1x بطاطا مقلية مقرمشة<br>
+                        <strong>ملاحظات:</strong> بدون بصل، ثومية إضافية
+                    </div>
+                    <button class="btn" onclick="alert('تم نقل الطلب إلى قيد التحضير!')">بدء التحضير (20 دقيقة)</button>
                 </div>
-                <div class="items-list">
-                    • 1x وجبة مشويات مشكلة<br>
-                    • 2x عصير ليمون طبيعي
-                </div>
-                <button class="btn" style="background: #3b82f6;" onclick="alert('تم تجهيز الطلب للاستلام!')">جاهز للاستلام 🛵</button>
             </div>
-        </div>
 
-        <div class="column">
-            <h2>✅ جاهز للاستلام (Ready)</h2>
-            <div class="order-card" style="border-right-color: #10b981;">
-                <div class="order-header">
-                    <span>#WAS-NAL-8488</span>
-                    <span class="badge" style="background: #10b981;">بانتظار الكابتن</span>
+            <div class="column">
+                <h2>🔥 قيد التحضير (Preparing)</h2>
+                <div class="order-card" style="border-right-color: #f59e0b;">
+                    <div class="order-header">
+                        <span>#WAS-NAL-8490</span>
+                        <span class="badge" style="background: #f59e0b;">جاري الطبخ</span>
+                    </div>
+                    <div class="items-list">
+                        • 1x وجبة مشويات مشكلة<br>
+                        • 2x عصير ليمون طبيعي
+                    </div>
+                    <button class="btn" style="background: #3b82f6;" onclick="alert('تم تجهيز الطلب للاستلام!')">جاهز للاستلام 🛵</button>
                 </div>
-                <div class="items-list">
-                    • 3x صينية بيتزا عائلية
+            </div>
+
+            <div class="column">
+                <h2>✅ جاهز للاستلام (Ready)</h2>
+                <div class="order-card" style="border-right-color: #10b981;">
+                    <div class="order-header">
+                        <span>#WAS-NAL-8488</span>
+                        <span class="badge" style="background: #10b981;">بانتظار الكابتن</span>
+                    </div>
+                    <div class="items-list">
+                        • 3x صينية بيتزا عائلية
+                    </div>
+                    <div style="font-size: 12px; color: #10b981; font-weight: bold; text-align: center;">الكابتن محمد في الطريق للمتجر</div>
                 </div>
-                <div style="font-size: 12px; color: #10b981; font-weight: bold; text-align: center;">الكابتن محمد في الطريق للمتجر</div>
             </div>
         </div>
     </div>
+
+    <script>
+        let currentPhone = '';
+        async function sendOtp() {
+            const phone = document.getElementById('phoneInput').value;
+            if (!phone) { alert('الرجاء إدخال رقم الهاتف'); return; }
+            currentPhone = phone;
+
+            try {
+                const res = await fetch('/api/v1/auth/whatsapp/send-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phoneNumber: phone })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert('تم إرسال رمز التحقق بنجاح عبر واتساب! (رمز التجربة: ' + (data.demoOtp || '1234') + ')');
+                    document.getElementById('otpSection').style.display = 'block';
+                } else {
+                    alert('فشل إرسال الرمز: ' + data.error);
+                }
+            } catch (e) {
+                alert('خطأ في الاتصال بالخادم');
+            }
+        }
+
+        async function verifyOtp() {
+            const otp = document.getElementById('otpInput').value;
+            if (!otp) { alert('الرجاء إدخال رمز التحقق'); return; }
+
+            try {
+                const res = await fetch('/api/v1/auth/whatsapp/verify-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phoneNumber: currentPhone, otp })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    document.getElementById('authScreen').style.display = 'none';
+                    document.getElementById('kdsScreen').style.display = 'block';
+                } else {
+                    alert('رمز التحقق غير صحيح: ' + data.error);
+                }
+            } catch (e) {
+                alert('خطأ في التحقق');
+            }
+        }
+    </script>
 </body>
 </html>
