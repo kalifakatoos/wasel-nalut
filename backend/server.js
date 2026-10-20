@@ -16,7 +16,8 @@ const {
   SUPABASE_URL,
   SUPABASE_ANON_KEY,
   JWT_SECRET = 'wasel_nalut_secure_jwt_token_2026_super_key',
-  MASTER_ADMIN_PIN = '7788'
+  MASTER_ADMIN_PIN = '7788',
+  KAPSO_API_KEY
 } = process.env;
 
 // Validate required env variables
@@ -196,23 +197,36 @@ app.post('/api/v1/auth/whatsapp/send-otp', async (req, res) => {
   console.log(`📱 [Kapso WhatsApp] Sending OTP ${otp} to ${phoneNumber}`);
 
   try {
-    // Forward or dispatch via Kapso MCP API
-    const kapsoRes = await fetch('https://api.kapso.ai/mcp', {
+    // Dispatch WhatsApp message via Kapso API using production project config
+    const kapsoRes = await fetch('https://api.kapso.ai/v1/whatsapp/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.KAPSO_API_KEY || 'ae492601671860d4cd245c8e9c0158c53a30b7b44e5af16c23df4b75c56ed96d'}`
+        'Authorization': `Bearer ${KAPSO_API_KEY}`,
+        'x-kapso-project-id': '5779f536-9955-40a6-8317-d7d75d8ccbe4',
+        'x-kapso-whatsapp-config-id': '306b45c4-3ec8-479c-b4bb-19e2b5ecd9c6',
+        'x-kapso-whatsapp-phone-id': '1100582179808362'
       },
       body: JSON.stringify({
-        jsonrpc: '2.0',
-        method: 'notifications:send',
-        params: {
-          to: phoneNumber,
-          message: `مرحباً بك في واصل نالوت. رمز التحقق الخاص بك عبر واتساب هو: ${otp}`
-        },
-        id: 1
+        messaging_product: 'whatsapp',
+        to: phoneNumber,
+        type: 'template',
+        template: {
+          name: 'wasel_otp_verification',
+          language: { code: 'ar' },
+          components: [{
+            type: 'body',
+            parameters: [{ type: 'text', text: otp }]
+          }]
+        }
       })
     });
+
+    const kapsoData = await kapsoRes.json();
+
+    if (!kapsoRes.ok && !kapsoData.success) {
+      console.warn(`⚠️ Kapso WhatsApp dispatch warning: ${JSON.stringify(kapsoData)}`);
+    }
 
     res.status(200).json({
       success: true,
@@ -222,12 +236,10 @@ app.post('/api/v1/auth/whatsapp/send-otp', async (req, res) => {
     });
   } catch (err) {
     console.error('❌ Kapso WhatsApp dispatch error:', err.message);
-    // Fallback success for development demo
-    res.status(200).json({
-      success: true,
-      message: 'OTP generated (Kapso MCP offline fallback)',
-      phoneNumber,
-      demoOtp: otp
+    res.status(502).json({
+      success: false,
+      error: 'Failed to dispatch WhatsApp OTP via Kapso',
+      details: process.env.NODE_ENV === 'development' ? err.message : undefined
     });
   }
 });
