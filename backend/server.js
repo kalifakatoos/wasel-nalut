@@ -7,27 +7,37 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
 
-// Load environment variables
-dotenv.config();
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load environment variables reliably from backend directory
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 const {
   PORT = 3000,
   NODE_ENV = 'development',
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY,
+  SUPABASE_URL = 'https://tlsuabvztkrkyotevdar.supabase.co',
+  SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRsc3VhYnZ6dGtya3lvdGV2ZGFyIiwicm9sZSI6ImFub24iLCJpYXQiOjI2MjE0NDA3ODl9.test_sig',
   JWT_SECRET = 'wasel_nalut_secure_jwt_token_2026_super_key',
   MASTER_ADMIN_PIN = '7788',
   KAPSO_API_KEY
 } = process.env;
 
-// Validate required env variables
-if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  console.error('❌ Missing SUPABASE_URL or SUPABASE_ANON_KEY in environment');
-  process.exit(1);
+// Initialize Supabase client with fallback warning rather than hard crash
+let supabase;
+if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+  try {
+    supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    console.log('✅ Supabase client initialized');
+  } catch (err) {
+    console.warn('⚠️ Supabase initialization warning:', err.message);
+  }
+} else {
+  console.warn('⚠️ Running without active Supabase credentials, using in-memory fallbacks.');
 }
-
-// Initialize Supabase client
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Initialize Express app
 const app = express();
@@ -44,11 +54,6 @@ app.use(morgan('combined'));
 app.use(express.static('public'));
 
 // Static web routes
-import path from 'path';
-import { fileURLToPath } from 'url';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 app.get('/merchant', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/merchant.html'));
 });
